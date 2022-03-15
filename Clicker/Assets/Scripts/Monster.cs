@@ -11,6 +11,7 @@ public class Monster : MonoBehaviour
     public GameObject textlife; //texte de vie
     public Image healthbar; //visuel barre de vie
     public GameObject visual; //visuel du monstre
+    public int monsterReward; //gold du monstre
 
     void Start()
     {
@@ -50,8 +51,8 @@ public class Monster : MonoBehaviour
         maxHP = index.HP;
         HP = maxHP;
         UpdateHPvisuals();
-
         visual.GetComponent<SpriteRenderer>().sprite = index.sprite;
+        monsterReward = index.reward;
     }
 
     public bool isAlive()

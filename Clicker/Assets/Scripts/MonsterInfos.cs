@@ -8,4 +8,5 @@ public class MonsterInfos
     public string name;
     public int HP;
     public Sprite sprite;
+    public int reward;
 }
