@@ -132,7 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 289097872}
-  - component: {fileID: 289097873}
   m_Layer: 5
   m_Name: Gold
   m_TagString: Untagged
@@ -160,20 +159,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &289097873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 289097871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c51be5ee93e7c144298ff05e1e333e53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  goldText: {fileID: 1076367437}
-  gold: 0
 --- !u!1 &416895150
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,7 +1056,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1118789878}
   m_HandleRect: {fileID: 1118789877}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1716,13 +1701,13 @@ MonoBehaviour:
     cost: 50
     DPS: 5
     ispermanent: 0
-  - name: Upgrade shield
+  - name: Upgrade Shield
     description: The Knight deals more damage
     sprite: {fileID: -1466942356706986391, guid: f19b64da82648c6408296a0a6d85a8b5, type: 3}
     cost: 50
     DPS: 5
     ispermanent: 1
-  - name: Upgrade potions
+  - name: Upgrade Potion
     description: The Doctor deals more damage
     sprite: {fileID: 2380358362628087116, guid: f19b64da82648c6408296a0a6d85a8b5, type: 3}
     cost: 50

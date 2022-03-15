@@ -44,6 +44,7 @@ public class UpgradeUI : MonoBehaviour
         {
             Debug.Log("Vous n'avez pas assez d'argent !");
 
+            //Feedback
             GameObject go = GameObject.Instantiate(MainGame.Instance.prefabNotEnoughGold, MainGame.Instance.importantcanvas.transform, false);
             GameObject.Destroy(go, 1);
             if (go != null)

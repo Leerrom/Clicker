@@ -20,11 +20,12 @@ public class MainGame : MonoBehaviour
     public GameObject prefabDamageFeedback;
     public GameObject prefabNotEnoughGold;
 
-    public List<Upgrade> upgrades;
+    public List<Upgrade> upgrades; //permet de rentrer dans l'editor les upgrades
     public GameObject prefabUpgradeUI;
     public GameObject parentUpgrades; //objet "content"
 
-    List<GameObject> nonpermanentUpgrade = new List<GameObject>();
+    List<GameObject> permanentUpgrade = new List<GameObject>(); //Liste les améliorations permanentes
+    List<GameObject> nonpermanentUpgrade = new List<GameObject>(); //Liste les améliorations non-permanentes
     List<Upgrade> _unlockedUpgrades = new List<Upgrade>(); //Liste d'upgrades débloquées
     float _timerAutoDamage;
 
@@ -49,14 +50,25 @@ public class MainGame : MonoBehaviour
         //Génération des upgrades
         foreach (var upgrade in upgrades)
         {
+            GameObject go = GameObject.Instantiate(prefabUpgradeUI, parentUpgrades.transform, false);
+            go.transform.localPosition = Vector3.zero;
+            go.GetComponent<UpgradeUI>().Initialize(upgrade);
+
             if (upgrade.ispermanent == false)
             {
-                GameObject go = GameObject.Instantiate(prefabUpgradeUI, parentUpgrades.transform, false);
-                go.transform.localPosition = Vector3.zero;
-                go.GetComponent<UpgradeUI>().Initialize(upgrade);
-
                 nonpermanentUpgrade.Add(go);
             }
+            else
+            {
+                permanentUpgrade.Add(go);
+                go.SetActive(false);
+            }
+        }
+
+        //Liste des upgrades permanentes
+        foreach (var item2 in permanentUpgrade)
+        {
+            Debug.Log(item2.GetComponent<UpgradeUI>().textName.text);
         }
     }
 
@@ -98,8 +110,6 @@ public class MainGame : MonoBehaviour
     {
         _currentMonster++;
         monster.SetMonster(monsters[_currentMonster]);
-
-        Debug.Log("Prochain monstre !");
     }
 
     void Hit(int damage, Monster monster) //L'ennemi prend des dégâts
@@ -134,12 +144,12 @@ public class MainGame : MonoBehaviour
         string unlockedupdates = "Upgrades actuelles : ";
         for (int i = 0; i < _unlockedUpgrades.Count; i++)
         {
-            unlockedupdates += _unlockedUpgrades[i].name + ", ";
+            unlockedupdates += ", " + _unlockedUpgrades[i].name;
         }
         Debug.Log(unlockedupdates);
     }
 
-    public void DeleteNonPermanent(Upgrade upgrade)
+    public void DeleteNonPermanent(Upgrade upgrade) //Supprime les améliorations non-permanentes et génère les permanentes
     {
         if(nonpermanentUpgrade.Count != 0)
         {
@@ -147,10 +157,39 @@ public class MainGame : MonoBehaviour
             {
                 if(item.GetComponent<UpgradeUI>().textName.text == upgrade.name)
                 {
+                    if (item.GetComponent<UpgradeUI>().textName.text == "The Knight")
+                    {
+                        Debug.Log("Knight upgrade");
+                        foreach (var item2 in permanentUpgrade)
+                        {
+                            if (item2.GetComponent<UpgradeUI>().textName.text == "Upgrade Shield")
+                            {
+                                item2.SetActive(true);
+                                break;
+                            }
+                        }
+                    }
+                    if (item.GetComponent<UpgradeUI>().textName.text == "The Doctor")
+                    {
+                        Debug.Log("Doctor upgrade");
+                        foreach (var item2 in permanentUpgrade)
+                        {
+                            if (item2.GetComponent<UpgradeUI>().textName.text == "Upgrade Potion")
+                            {
+                                item2.SetActive(true);
+                                break;
+                            }
+                        }
+                    }
                     item.GetComponent<UpgradeUI>().gameObject.SetActive(false);
                 }
             }
         }
+    }
+
+    public void GeneratePermanent(Upgrade upgrade)
+    {
+        
     }
 
     public void UpdateGold(int gold) //Update le texte
