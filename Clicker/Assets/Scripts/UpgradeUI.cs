@@ -8,16 +8,22 @@ using DG.Tweening;
 public class UpgradeUI : MonoBehaviour
 {
     public Image image;
+    public Image button;
     public TextMeshProUGUI textName;
     public TextMeshProUGUI textDescription;
     public TextMeshProUGUI textPrice;
     public int DPS;
     public int LVL;
-    Upgrade _upgrade;
+    public Upgrade _upgrade;
     public bool isPerm;
-    int _actualCost;
+    public int _actualCost;
 
-    public Image button;
+    public static UpgradeUI Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void Initialize(Upgrade upgrade)
     {
@@ -27,6 +33,7 @@ public class UpgradeUI : MonoBehaviour
         textDescription.text = upgrade.description;
         textPrice.text = upgrade.cost + "$";
         DPS = upgrade.DPS;
+        //BonusDPS = upgrade.BonusDPS;
         LVL = upgrade.LVL;
         isPerm = upgrade.ispermanent;
         _actualCost = upgrade.cost;
@@ -60,6 +67,17 @@ public class UpgradeUI : MonoBehaviour
             {
                 go.transform.DOLocalMoveY(2, 0.8f);
                 go.GetComponent<TextMeshProUGUI>().DOFade(0, 0.8f);
+            }
+        }
+    }
+
+    public void UpdateVisuals(Upgrade upgrade, int value)
+    {
+        foreach(var item in MainGame.Instance.permanentUpgrade)
+        {
+            if(item.GetComponent<UpgradeUI>().textName.text == upgrade.name)
+            {
+                item.GetComponent<UpgradeUI>().textPrice.text = value + "$";
             }
         }
     }

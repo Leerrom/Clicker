@@ -11,6 +11,12 @@ public class MainGame : MonoBehaviour
     int monsterMaxHP; //HP max
     int monsterHP; //HP actuelle du monstre
     public List<MonsterInfos> monsters;
+    public MonsterInfos randomMonster;
+    public List<Sprite> monsterSprites;
+    public Sprite sprite1;
+    public Sprite sprite2;
+    public Sprite sprite3;
+    System.Random random = new System.Random();
 
     int _currentMonster; //index du monstre actuel
     public Monster monster;
@@ -24,16 +30,17 @@ public class MainGame : MonoBehaviour
     public GameObject prefabUpgradeUI;
     public GameObject parentUpgrades; //objet "content"
 
-    List<GameObject> permanentUpgrade = new List<GameObject>(); //Liste les améliorations permanentes
+    public List<GameObject> permanentUpgrade = new List<GameObject>(); //Liste les améliorations permanentes
     List<GameObject> nonpermanentUpgrade = new List<GameObject>(); //Liste les améliorations non-permanentes
     List<Upgrade> _unlockedUpgrades = new List<Upgrade>(); //Liste d'upgrades débloquées
-    float _timerAutoDamage;
+    float _timerAutoDamage1;
+    float _timerAutoDamage2;
 
     public static MainGame Instance; //permet d'accéder à MainGame partout
 
     public int goldmoney = 0; //Monnaie
     public TextMeshProUGUI goldText;
-    [SerializeField] int mousedamage = 1;
+    public int mousedamage = 1;
 
 
     private void Awake()
@@ -46,6 +53,9 @@ public class MainGame : MonoBehaviour
         monster.SetMonster(monsters[_currentMonster]);
         GetMonster();
         UpdateGold(goldmoney);
+        monsterSprites.Add(sprite1);
+        monsterSprites.Add(sprite2);
+        monsterSprites.Add(sprite3);
 
         //Génération des upgrades
         foreach (var upgrade in upgrades)
@@ -61,27 +71,48 @@ public class MainGame : MonoBehaviour
             else
             {
                 permanentUpgrade.Add(go);
-                go.SetActive(false);
+                if (upgrade.name != "Upgrade Slash")
+                {
+                    go.SetActive(false);
+                }
+                else
+                {
+                    //Rajoute basiquement le Upgrade Slash dans la liste des améliorations débloquées
+                    AddUpgrade(upgrade);
+                }
             }
         }
-
-        //DEBUG Liste des upgrades permanentes
-        /*foreach (var item2 in permanentUpgrade)
-        {
-            Debug.Log(item2.GetComponent<UpgradeUI>().textName.text);
-        }*/
     }
 
     void Update()
     {
         ///////////////Dégâts des améliorations achetées/////////////////
-        _timerAutoDamage += Time.deltaTime; //Timer
-        if (_timerAutoDamage >= 1.0f)
+        _timerAutoDamage1 += Time.deltaTime; //Timer
+        _timerAutoDamage2 += Time.deltaTime;
+
+        //Timer Knight
+        if (_timerAutoDamage1 >= 1.5f)
         {
-            _timerAutoDamage = 0;
+            _timerAutoDamage1 = 0;
             foreach (var upgrade in _unlockedUpgrades)
             {
-                Hit(upgrade.DPS, monster);
+                if (upgrade.name == "The Knight")
+                {
+                    Hit(upgrade.DPS, monster);
+                }
+            }
+        }
+
+        //Timer Doctor
+        if (_timerAutoDamage2 >= 3f)
+        {
+            _timerAutoDamage2 = 0;
+            foreach (var upgrade in _unlockedUpgrades)
+            {
+                if (upgrade.name == "The Doctor")
+                {
+                    Hit(upgrade.DPS, monster);
+                }
             }
         }
 
@@ -96,6 +127,11 @@ public class MainGame : MonoBehaviour
                 Hit(mousedamage, monster); //dégâts de clic de la souris
             }
         }
+
+        if (monsters.Count <= 1)
+        {
+            //GenerateMonsterInfos();
+        }
     }
 
     void GetMonster()
@@ -108,8 +144,8 @@ public class MainGame : MonoBehaviour
 
     private void NextMonster()
     {
-        _currentMonster++;
-        monster.SetMonster(monsters[_currentMonster]);
+        //_currentMonster++;
+        monster.SetMonster(monsters[0]);
     }
 
     void Hit(int damage, Monster monster) //L'ennemi prend des dégâts
@@ -131,22 +167,20 @@ public class MainGame : MonoBehaviour
 
         if (monster.isAlive() == false)
         {
+            GenerateMonsterInfos();
             goldmoney += monster.monsterReward;
             UpdateGold(goldmoney);
+            monsters.RemoveAt(0);
             NextMonster();
+
+            //DisplayMonsterList();
         }
     }
 
     public void AddUpgrade(Upgrade upgrade) //Ajoute l'amélioration à la liste des améliorations débloquées
     {
         _unlockedUpgrades.Add(upgrade);
-        //DEBUG//
-        string unlockedupdates = "Upgrades actuelles : ";
-        for (int i = 0; i < _unlockedUpgrades.Count; i++)
-        {
-            unlockedupdates += ", " + _unlockedUpgrades[i].name;
-        }
-        Debug.Log(unlockedupdates);
+        //DisplayUnlockedUpdates();
     }
 
     public void DeleteNonPermanent(Upgrade upgrade) //Supprime les améliorations non-permanentes et génère les permanentes
@@ -170,8 +204,7 @@ public class MainGame : MonoBehaviour
     {
         if (item.GetComponent<UpgradeUI>().textName.text == nonpermupgrade)
         {
-            //Spawn l'apparition permanente du shield
-            Debug.Log("''" + permupgrade + "'' upgrade unlocked");
+            //Génère les améliorations permanentes
             foreach (var item2 in permanentUpgrade)
             {
                 if (item2.GetComponent<UpgradeUI>().textName.text == permupgrade)
@@ -190,55 +223,136 @@ public class MainGame : MonoBehaviour
 
     public void PermanentUpgradeCheck(Upgrade upgrade) //Cherche quelle upgrade a été séléctionnée
     {
+        Debug.Log(upgrade.name);
         string upgradename = upgrade.name;
-        int index = 0;
         foreach (var item in _unlockedUpgrades)
         {
             if (upgradename == "Upgrade Shield")
             {
-                //_unlockedUpgrades.IndexOf(item);
-                index++;
-                Debug.Log(index);
-
-                UpgradeShield(upgrade, index);
-                Debug.Log("Amélioration du bouclier");
+                UpgradeItem(upgrade, 40, "Upgrade Shield", "The Knight");
+                Debug.Log("Amélioration du bouclier !");
                 break;
             }
             if (upgradename == "Upgrade Potion")
             {
-                index++;
-                Debug.Log(index);
-
-                //UpgradePotion(item, upgrade);
-                Debug.Log("Amélioration de la potion");
+                UpgradeItem(upgrade, 35, "Upgrade Potion", "The Doctor");
+                Debug.Log("Amélioration de la potion !");
                 break;
             }
-            else
+            if (upgradename == "Upgrade Slash")
             {
-                index++;
+                Debug.Log("Amélioration du slash !");
+                UpgradeSlash(upgrade, 25);
+                break;
             }
         }
     }
 
-    public void UpgradeShield(Upgrade upgrade, int index)
+    public void UpgradeItem(Upgrade upgrade, int upgradecost, string upgradename, string character)
     {
-        upgrade.DPS += 3;
-        upgrade.cost += 40;
+        upgrade.cost += upgradecost;
+        
+        foreach(var item in permanentUpgrade)
+        {
+            if (item.GetComponent<UpgradeUI>().textName.text == upgrade.name)
+            {
+                item.GetComponent<UpgradeUI>()._actualCost += upgradecost;
+                break;
+            }
+        }
 
-        //permanentUpgrade.RemoveAt(index);
+        RemoveUpgrade(upgradename);
         AddUpgrade(upgrade);
+
+        UpdateCharacterDamage(upgrade.DPS, character);
+
+        UpgradeUI.Instance.UpdateVisuals(upgrade, upgrade.cost);
+        
+        DisplayUnlockedUpdates();
     }
 
-    public void UpgradePotion(GameObject upgradeVisual, Upgrade upgrade)
+    public void UpgradeSlash(Upgrade upgrade, int upgradecost)
     {
-        upgrade.DPS += 8;
-        upgrade.cost += 35;
+        mousedamage++;
+        upgrade.cost += upgradecost;
+        UpgradeUI.Instance._actualCost += upgradecost;
 
+        RemoveUpgrade("Upgrade Slash");
         AddUpgrade(upgrade);
+
+        //Debug.Log(mousedamage);
+        //Debug.Log(upgrade.cost);
+
+        UpgradeUI.Instance.UpdateVisuals(upgrade, upgrade.cost);
+
+        DisplayUnlockedUpdates();
     }
 
     public void UpdateVisual(GameObject visual, int dpsValue, int costValue)
     {
         visual.GetComponent<UnityEngine.UI.Text>().text = "" + dpsValue;
+    }
+
+    public void RemoveUpgrade(string upgradename)
+    {
+        //Supprime L'amélioration actuelle
+        foreach (var item in _unlockedUpgrades)
+        {
+            if (item.name == upgradename)
+            {
+                _unlockedUpgrades.Remove(item);
+                break;
+            }
+        }
+    }
+
+    public void UpdateCharacterDamage(int bonusDamage, string character) //Ajoute les dégâts de l'amélioration au DPS du personnage choisi
+    {
+        foreach (var item in _unlockedUpgrades)
+        {
+            if (item.name == character)
+            {
+                item.DPS += bonusDamage;
+                //Debug.Log(item.name + " " + item.DPS);
+                break;
+            }
+        }
+    }
+
+    public void GenerateMonsterInfos()
+    {
+        randomMonster.name = "Zombax";
+        randomMonster.HP = monster.maxHP + random.Next(10,20);
+        randomMonster.sprite = monsterSprites[random.Next(0, 2)];
+        randomMonster.reward = randomMonster.HP * random.Next(1, 2);
+
+        monsters.Add(randomMonster);
+    }
+
+
+
+
+
+
+
+    public void DisplayUnlockedUpdates()
+    {
+        string unlockedupdates = "Upgrades actuelles : ";
+        for (int i = 0; i < _unlockedUpgrades.Count; i++)
+        {
+            unlockedupdates += ", " + _unlockedUpgrades[i].name;
+        }
+        Debug.Log(unlockedupdates);
+    }
+
+    public void DisplayMonsterList()
+    {
+        //Debug
+        string monstersList = "Liste des monstres : ";
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            monstersList += ", " + monsters[i].name;
+        }
+        Debug.Log(monstersList);
     }
 }

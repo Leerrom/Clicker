@@ -8,10 +8,12 @@ public class Monster : MonoBehaviour
 {
     public int maxHP;
     [SerializeField]int HP; //vie actuelle du monste
+    public GameObject visualLVL;
     public GameObject textlife; //texte de vie
     public Image healthbar; //visuel barre de vie
     public GameObject visual; //visuel du monstre
     public int monsterReward; //gold du monstre
+    public int monsterLVL = 0;
 
     void Start()
     {
@@ -29,11 +31,10 @@ public class Monster : MonoBehaviour
     {
         //Update du texte
         textlife.GetComponent<UnityEngine.UI.Text>().text = HP + " / " + maxHP;
+        visualLVL.GetComponent<UnityEngine.UI.Text>().text = "LEVEL " + monsterLVL;
         //Update de la barre de vie
         float percent = (float)HP / (float)maxHP;
         healthbar.fillAmount = percent;
-        
-        //Debug.Log("Vie actualisée !");
     }
 
     public void Hit(int damage) //Le monstre prend un coup
@@ -48,6 +49,7 @@ public class Monster : MonoBehaviour
 
     public void SetMonster(MonsterInfos index)
     {
+        monsterLVL++;
         maxHP = index.HP;
         HP = maxHP;
         UpdateHPvisuals();
