@@ -65,11 +65,11 @@ public class MainGame : MonoBehaviour
             }
         }
 
-        //Liste des upgrades permanentes
-        foreach (var item2 in permanentUpgrade)
+        //DEBUG Liste des upgrades permanentes
+        /*foreach (var item2 in permanentUpgrade)
         {
             Debug.Log(item2.GetComponent<UpgradeUI>().textName.text);
-        }
+        }*/
     }
 
     void Update()
@@ -103,7 +103,7 @@ public class MainGame : MonoBehaviour
         GameObject monster = GameObject.FindGameObjectWithTag("Monster");
         monsterMaxHP = monster.GetComponent<Monster>().maxHP;
         monsterHP = monsterMaxHP;
-        Debug.Log("Vie du monstre :" + monsterHP);
+        //Debug.Log("Vie du monstre :" + monsterHP);
     }
 
     private void NextMonster()
@@ -157,43 +157,88 @@ public class MainGame : MonoBehaviour
             {
                 if(item.GetComponent<UpgradeUI>().textName.text == upgrade.name)
                 {
-                    if (item.GetComponent<UpgradeUI>().textName.text == "The Knight")
-                    {
-                        Debug.Log("Knight upgrade");
-                        foreach (var item2 in permanentUpgrade)
-                        {
-                            if (item2.GetComponent<UpgradeUI>().textName.text == "Upgrade Shield")
-                            {
-                                item2.SetActive(true);
-                                break;
-                            }
-                        }
-                    }
-                    if (item.GetComponent<UpgradeUI>().textName.text == "The Doctor")
-                    {
-                        Debug.Log("Doctor upgrade");
-                        foreach (var item2 in permanentUpgrade)
-                        {
-                            if (item2.GetComponent<UpgradeUI>().textName.text == "Upgrade Potion")
-                            {
-                                item2.SetActive(true);
-                                break;
-                            }
-                        }
-                    }
-                    item.GetComponent<UpgradeUI>().gameObject.SetActive(false);
+                    item.GetComponent<UpgradeUI>().gameObject.SetActive(false); //Fait disparaître l'amélioration
+
+                    GeneratePermanentUpgrade(item, "The Knight", "Upgrade Shield"); //Génère la nouvelle amélioration permanente du Knight
+                    GeneratePermanentUpgrade(item, "The Doctor", "Upgrade Potion"); //Génère la nouvelle amélioration permanente du Doctor
                 }
             }
         }
     }
 
-    public void GeneratePermanent(Upgrade upgrade)
+    public void GeneratePermanentUpgrade(GameObject item, string nonpermupgrade, string permupgrade)
     {
-        
+        if (item.GetComponent<UpgradeUI>().textName.text == nonpermupgrade)
+        {
+            //Spawn l'apparition permanente du shield
+            Debug.Log("''" + permupgrade + "'' upgrade unlocked");
+            foreach (var item2 in permanentUpgrade)
+            {
+                if (item2.GetComponent<UpgradeUI>().textName.text == permupgrade)
+                {
+                    item2.SetActive(true);
+                    break;
+                }
+            }
+        }
     }
 
     public void UpdateGold(int gold) //Update le texte
     {
         goldText.GetComponent<TextMeshProUGUI>().text = "Gold : " + gold;
+    }
+
+    public void PermanentUpgradeCheck(Upgrade upgrade) //Cherche quelle upgrade a été séléctionnée
+    {
+        string upgradename = upgrade.name;
+        int index = 0;
+        foreach (var item in _unlockedUpgrades)
+        {
+            if (upgradename == "Upgrade Shield")
+            {
+                //_unlockedUpgrades.IndexOf(item);
+                index++;
+                Debug.Log(index);
+
+                UpgradeShield(upgrade, index);
+                Debug.Log("Amélioration du bouclier");
+                break;
+            }
+            if (upgradename == "Upgrade Potion")
+            {
+                index++;
+                Debug.Log(index);
+
+                //UpgradePotion(item, upgrade);
+                Debug.Log("Amélioration de la potion");
+                break;
+            }
+            else
+            {
+                index++;
+            }
+        }
+    }
+
+    public void UpgradeShield(Upgrade upgrade, int index)
+    {
+        upgrade.DPS += 3;
+        upgrade.cost += 40;
+
+        //permanentUpgrade.RemoveAt(index);
+        AddUpgrade(upgrade);
+    }
+
+    public void UpgradePotion(GameObject upgradeVisual, Upgrade upgrade)
+    {
+        upgrade.DPS += 8;
+        upgrade.cost += 35;
+
+        AddUpgrade(upgrade);
+    }
+
+    public void UpdateVisual(GameObject visual, int dpsValue, int costValue)
+    {
+        visual.GetComponent<UnityEngine.UI.Text>().text = "" + dpsValue;
     }
 }

@@ -11,6 +11,8 @@ public class UpgradeUI : MonoBehaviour
     public TextMeshProUGUI textName;
     public TextMeshProUGUI textDescription;
     public TextMeshProUGUI textPrice;
+    public int DPS;
+    public int LVL;
     Upgrade _upgrade;
     public bool isPerm;
     int _actualCost;
@@ -24,6 +26,8 @@ public class UpgradeUI : MonoBehaviour
         textName.text = upgrade.name;
         textDescription.text = upgrade.description;
         textPrice.text = upgrade.cost + "$";
+        DPS = upgrade.DPS;
+        LVL = upgrade.LVL;
         isPerm = upgrade.ispermanent;
         _actualCost = upgrade.cost;
     }
@@ -34,15 +38,20 @@ public class UpgradeUI : MonoBehaviour
         {
             MainGame.Instance.goldmoney -= _actualCost;
             MainGame.Instance.UpdateGold(MainGame.Instance.goldmoney);
-            MainGame.Instance.AddUpgrade(_upgrade);
             if (!isPerm)
             {
                 MainGame.Instance.DeleteNonPermanent(_upgrade);
+                MainGame.Instance.AddUpgrade(_upgrade);
+            }
+            if (isPerm)
+            {
+                //Debug.Log(_upgrade.name + " sélectionnée !");
+                MainGame.Instance.PermanentUpgradeCheck(_upgrade);
             }
         }
         else //Pas assez d'argent
         {
-            Debug.Log("Vous n'avez pas assez d'argent !");
+            //Debug.Log("Vous n'avez pas assez d'argent !");
 
             //Feedback
             GameObject go = GameObject.Instantiate(MainGame.Instance.prefabNotEnoughGold, MainGame.Instance.importantcanvas.transform, false);

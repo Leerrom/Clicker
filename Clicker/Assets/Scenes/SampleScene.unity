@@ -1056,7 +1056,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1118789878}
   m_HandleRect: {fileID: 1118789877}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1695,27 +1695,31 @@ MonoBehaviour:
     cost: 30
     DPS: 1
     ispermanent: 0
+    LVL: 0
   - name: The Doctor
     description: Drops a bomb that deals lot of damages
     sprite: {fileID: 9081189762871703501, guid: f19b64da82648c6408296a0a6d85a8b5, type: 3}
     cost: 50
     DPS: 5
     ispermanent: 0
+    LVL: 0
   - name: Upgrade Shield
     description: The Knight deals more damage
     sprite: {fileID: -1466942356706986391, guid: f19b64da82648c6408296a0a6d85a8b5, type: 3}
     cost: 50
-    DPS: 5
+    DPS: 3
     ispermanent: 1
+    LVL: 0
   - name: Upgrade Potion
     description: The Doctor deals more damage
     sprite: {fileID: 2380358362628087116, guid: f19b64da82648c6408296a0a6d85a8b5, type: 3}
-    cost: 50
-    DPS: 5
+    cost: 130
+    DPS: 8
     ispermanent: 1
+    LVL: 0
   prefabUpgradeUI: {fileID: 7795898009049037495, guid: 4f7b6ca09de5ec0499bf0e50fa429889, type: 3}
   parentUpgrades: {fileID: 766758410}
-  goldmoney: 0
+  goldmoney: 200
   goldText: {fileID: 1076367437}
   mousedamage: 1
 --- !u!4 &1994922399

@@ -13,4 +13,5 @@ public class Upgrade
     public int cost;
     public int DPS;
     public bool ispermanent;
+    public int LVL = 0;
 }
