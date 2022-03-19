@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
@@ -12,6 +13,10 @@ public class MainGame : MonoBehaviour
     int monsterHP; //HP actuelle du monstre
     public List<MonsterInfos> monsters;
     public MonsterInfos randomMonster;
+
+    public Animator knightanimator;
+    public Animator doctoranimator;
+
     public List<Sprite> monsterSprites;
     public Sprite sprite1;
     public Sprite sprite2;
@@ -25,10 +30,29 @@ public class MainGame : MonoBehaviour
     public Canvas importantcanvas;
     public GameObject prefabDamageFeedback;
     public GameObject prefabNotEnoughGold;
+    public GameObject prefabDoctor;
+    public GameObject prefabKnight;
+    public GameObject knightLVLvisual;
+    public GameObject doctorLVLvisual;
+    private int knightLVL = 1;
+    private int doctorLVL = 1;
 
     public List<Upgrade> upgrades; //permet de rentrer dans l'editor les upgrades
     public GameObject prefabUpgradeUI;
     public GameObject parentUpgrades; //objet "content"
+    public GameObject spawnKnight;
+    public GameObject spawnDoctor;
+    public GameObject spawnExplosion;
+    public GameObject spawnCoins;
+    public GameObject prefabExplosion;
+    public GameObject spawnShieldbash;
+    public GameObject prefabShieldbash;
+    public GameObject prefabCoins;
+    public GameObject prefabSlash;
+    bool explosion = false;
+
+    private Vector3 mousePos;
+    private Vector3 objectPos;
 
     public List<GameObject> permanentUpgrade = new List<GameObject>(); //Liste les améliorations permanentes
     List<GameObject> nonpermanentUpgrade = new List<GameObject>(); //Liste les améliorations non-permanentes
@@ -50,12 +74,20 @@ public class MainGame : MonoBehaviour
 
     void Start()
     {
+        _timerAutoDamage1 += 0.75f;
+
         monster.SetMonster(monsters[_currentMonster]);
         GetMonster();
         UpdateGold(goldmoney);
         monsterSprites.Add(sprite1);
         monsterSprites.Add(sprite2);
         monsterSprites.Add(sprite3);
+
+        //Désactivation des visuels Knight et Doctor
+        prefabKnight.SetActive(false);
+        prefabDoctor.SetActive(false);
+        knightLVLvisual.SetActive(false);
+        doctorLVLvisual.SetActive(false);
 
         //Génération des upgrades
         foreach (var upgrade in upgrades)
@@ -93,17 +125,40 @@ public class MainGame : MonoBehaviour
         //Timer Knight
         if (_timerAutoDamage1 >= 1.5f)
         {
-            _timerAutoDamage1 = 0;
             foreach (var upgrade in _unlockedUpgrades)
             {
+                _timerAutoDamage1 = 0;
                 if (upgrade.name == "The Knight")
                 {
                     Hit(upgrade.DPS, monster);
+                    knightanimator.SetBool("Attack", true);
+                    Instantiate(prefabShieldbash, spawnShieldbash.transform);
                 }
             }
         }
+        if (_timerAutoDamage1 >= 0.4f)
+        {
+            knightanimator.SetBool("Attack", false);
+        }
+
 
         //Timer Doctor
+        if (_timerAutoDamage2 >= 2.5f && explosion == false)
+        {
+            foreach (var upgrade in _unlockedUpgrades)
+            {
+                if (upgrade.name == "The Doctor")
+                {
+                    Instantiate(prefabExplosion, spawnExplosion.transform);
+                    doctoranimator.SetBool("Attack", true);
+                    explosion = true;
+                }
+            }
+        }
+        if (_timerAutoDamage2 >= 2.9f)
+        {
+            doctoranimator.SetBool("Attack", false);
+        }
         if (_timerAutoDamage2 >= 3f)
         {
             _timerAutoDamage2 = 0;
@@ -112,6 +167,7 @@ public class MainGame : MonoBehaviour
                 if (upgrade.name == "The Doctor")
                 {
                     Hit(upgrade.DPS, monster);
+                    explosion = false;
                 }
             }
         }
@@ -121,16 +177,17 @@ public class MainGame : MonoBehaviour
             Vector3 world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(world, Vector2.zero);
 
+            mousePos = Input.mousePosition;
+            objectPos = Camera.main.ScreenToWorldPoint(mousePos);
+            Vector3 pos = new Vector3(objectPos.x, objectPos.y, -0.5f);
+
             if (hit.collider != null)
             {
                 Monster monster = hit.collider.GetComponent<Monster>();
                 Hit(mousedamage, monster); //dégâts de clic de la souris
-            }
-        }
 
-        if (monsters.Count <= 1)
-        {
-            //GenerateMonsterInfos();
+                Instantiate(prefabSlash, pos, Quaternion.identity);
+            }
         }
     }
 
@@ -144,8 +201,12 @@ public class MainGame : MonoBehaviour
 
     private void NextMonster()
     {
-        //_currentMonster++;
         monster.SetMonster(monsters[0]);
+        Instantiate(prefabCoins, spawnCoins.transform);
+
+        //Animation
+        monster.transform.position = new Vector3(monster.transform.position.x+4, monster.transform.position.y, monster.transform.position.z);
+        monster.transform.DOLocalMoveX(6.87f, 0.5f);
     }
 
     void Hit(int damage, Monster monster) //L'ennemi prend des dégâts
@@ -185,6 +246,7 @@ public class MainGame : MonoBehaviour
 
     public void DeleteNonPermanent(Upgrade upgrade) //Supprime les améliorations non-permanentes et génère les permanentes
     {
+        AddUpgrade(upgrade);
         if(nonpermanentUpgrade.Count != 0)
         {
             foreach(var item in nonpermanentUpgrade)
@@ -210,9 +272,24 @@ public class MainGame : MonoBehaviour
                 if (item2.GetComponent<UpgradeUI>().textName.text == permupgrade)
                 {
                     item2.SetActive(true);
+                    SpawnCharacter(nonpermupgrade);
                     break;
                 }
             }
+        }
+    }
+
+    public void SpawnCharacter(string charactertospawn)
+    {
+        if (charactertospawn == "The Knight")
+        {
+            prefabKnight.SetActive(true);
+            knightLVLvisual.SetActive(true);
+        }
+        if (charactertospawn == "The Doctor")
+        {
+            prefabDoctor.SetActive(true);
+            doctorLVLvisual.SetActive(true);
         }
     }
 
@@ -242,7 +319,7 @@ public class MainGame : MonoBehaviour
             if (upgradename == "Upgrade Slash")
             {
                 Debug.Log("Amélioration du slash !");
-                UpgradeSlash(upgrade, 25);
+                UpgradeSlash(upgrade, 35);
                 break;
             }
         }
@@ -260,6 +337,16 @@ public class MainGame : MonoBehaviour
                 break;
             }
         }
+
+        if (character == "The Knight")
+        {
+            knightLVL++;
+        }
+        if (character == "The Doctor")
+        {
+            doctorLVL++;
+        }
+        UpdateCharacterLVL(character);
 
         RemoveUpgrade(upgradename);
         AddUpgrade(upgrade);
@@ -322,14 +409,25 @@ public class MainGame : MonoBehaviour
     public void GenerateMonsterInfos()
     {
         randomMonster.name = "Zombax";
-        randomMonster.HP = monster.maxHP + random.Next(10,20);
-        randomMonster.sprite = monsterSprites[random.Next(0, 2)];
-        randomMonster.reward = randomMonster.HP * random.Next(1, 2);
+        randomMonster.HP = monster.maxHP + random.Next(12,24);
+        randomMonster.sprite = monsterSprites[random.Next(0, 3)];
+        DisplayMonsterSprite();
+        randomMonster.reward = randomMonster.HP * random.Next(1, 3);
 
         monsters.Add(randomMonster);
     }
 
-
+    public void UpdateCharacterLVL(string character)
+    {
+        if (character == "The Knight")
+        {
+            knightLVLvisual.GetComponent<UnityEngine.UI.Text>().text = "LEVEL " + knightLVL;
+        }
+        if (character == "The Doctor")
+        {
+            doctorLVLvisual.GetComponent<UnityEngine.UI.Text>().text = "LEVEL " + doctorLVL;
+        }
+    }
 
 
 
@@ -352,6 +450,17 @@ public class MainGame : MonoBehaviour
         for (int i = 0; i < monsters.Count; i++)
         {
             monstersList += ", " + monsters[i].name;
+        }
+        Debug.Log(monstersList);
+    }
+
+    public void DisplayMonsterSprite()
+    {
+        //Debug
+        string monstersList = "Sprites des monstres : ";
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            monstersList += ", " + monsterSprites[i].name;
         }
         Debug.Log(monstersList);
     }

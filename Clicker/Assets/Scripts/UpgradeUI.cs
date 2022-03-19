@@ -48,7 +48,7 @@ public class UpgradeUI : MonoBehaviour
             if (!isPerm)
             {
                 MainGame.Instance.DeleteNonPermanent(_upgrade);
-                MainGame.Instance.AddUpgrade(_upgrade);
+                //MainGame.Instance.AddUpgrade(_upgrade);
             }
             if (isPerm)
             {

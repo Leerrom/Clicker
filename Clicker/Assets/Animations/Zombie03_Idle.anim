@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Doctor_Idle
+  m_Name: Zombie03_Idle
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -20,9 +20,9 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: 767532732291643845, guid: 39061684d60d4a04dbf5c1636137cd40, type: 3}
+      value: {fileID: 3783351403586248606, guid: ee7acfff80d6d644193098c3a52c5cc6, type: 3}
     - time: 0.25
-      value: {fileID: -7791708351821934427, guid: 39061684d60d4a04dbf5c1636137cd40, type: 3}
+      value: {fileID: 8754923307208537993, guid: ee7acfff80d6d644193098c3a52c5cc6, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -42,8 +42,8 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: 767532732291643845, guid: 39061684d60d4a04dbf5c1636137cd40, type: 3}
-    - {fileID: -7791708351821934427, guid: 39061684d60d4a04dbf5c1636137cd40, type: 3}
+    - {fileID: 3783351403586248606, guid: ee7acfff80d6d644193098c3a52c5cc6, type: 3}
+    - {fileID: 8754923307208537993, guid: ee7acfff80d6d644193098c3a52c5cc6, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
