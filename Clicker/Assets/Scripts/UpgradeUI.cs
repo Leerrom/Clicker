@@ -17,6 +17,7 @@ public class UpgradeUI : MonoBehaviour
     public Upgrade _upgrade;
     public bool isPerm;
     public int _actualCost;
+    public GameObject spawnCoin;
 
     public static UpgradeUI Instance;
 
@@ -45,6 +46,9 @@ public class UpgradeUI : MonoBehaviour
         {
             MainGame.Instance.goldmoney -= _actualCost;
             MainGame.Instance.UpdateGold(MainGame.Instance.goldmoney);
+            Vector3 parent = button.transform.position;
+            Instantiate(MainGame.Instance.prefabCoins, spawnCoin.transform);
+            Debug.Log("OUI");
             if (!isPerm)
             {
                 MainGame.Instance.DeleteNonPermanent(_upgrade);

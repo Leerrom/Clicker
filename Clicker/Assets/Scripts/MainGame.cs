@@ -49,6 +49,7 @@ public class MainGame : MonoBehaviour
     public GameObject prefabShieldbash;
     public GameObject prefabCoins;
     public GameObject prefabSlash;
+    public GameObject prefabPouf;
     bool explosion = false;
 
     private Vector3 mousePos;
@@ -284,11 +285,13 @@ public class MainGame : MonoBehaviour
         if (charactertospawn == "The Knight")
         {
             prefabKnight.SetActive(true);
+            Instantiate(prefabPouf, prefabKnight.transform);
             knightLVLvisual.SetActive(true);
         }
         if (charactertospawn == "The Doctor")
         {
             prefabDoctor.SetActive(true);
+            Instantiate(prefabPouf, prefabDoctor.transform);
             doctorLVLvisual.SetActive(true);
         }
     }

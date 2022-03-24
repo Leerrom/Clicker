@@ -1388,7 +1388,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1118789878}
   m_HandleRect: {fileID: 1118789877}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2579,6 +2579,7 @@ MonoBehaviour:
   prefabShieldbash: {fileID: 960594494471176658, guid: ebd6aaf6092cf8840bbc9387dbc24238, type: 3}
   prefabCoins: {fileID: 760016723046776032, guid: c3e9b5defaee5884b913f6220d84e016, type: 3}
   prefabSlash: {fileID: 6848519804693001223, guid: 6b3622b141ff11944b6c1f5d2fc9ab83, type: 3}
+  prefabPouf: {fileID: 3176096027213128741, guid: 7ea1e67fde479a64abd16d3949c65462, type: 3}
   permanentUpgrade: []
   goldmoney: 0
   goldText: {fileID: 1076367437}
@@ -2753,7 +2754,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2106319938}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
